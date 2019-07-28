@@ -1,0 +1,7 @@
+{
+  "scripts": {
+    "build": "web-ext build --ignore-files package.json README.md",
+    "lint": "web-ext lint",
+    "start": "web-ext run"
+  }
+}
