@@ -1,7 +1,19 @@
 {
   "scripts": {
-    "build": "web-ext build --ignore-files package.json README.md screenshots/ icons/chrome-web-store-icon.png",
+    "build": "web-ext build",
     "lint": "web-ext lint",
-    "start": "web-ext run"
+    "start": "web-ext run --start-url https://www.rllmukforum.com",
+    "chrome": "web-ext run --target chromium --start-url https://www.rllmukforum.com"
+  },
+  "webExt": {
+    "ignoreFiles": [
+      "icons/chrome-web-store-icon.png",
+      "package.json",
+      "README.md",
+      "screenshots/"
+    ]
+  },
+  "devDependencies": {
+    "web-ext": "4.1.0"
   }
 }
