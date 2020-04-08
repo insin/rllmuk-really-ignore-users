@@ -16,7 +16,7 @@
       "matches": [
         "https://www.rllmukforum.com/*"
       ],
-      "js": ["./contentScript.js"]
+      "js": ["./rllmuk-really-ignore-users.user.js"]
     }
   ]
 }
