@@ -2,7 +2,8 @@
 // @name        Rllmuk Really Ignore Users
 // @description Really ignore ignored users, and ignore users in specific topics
 // @namespace   https://github.com/insin/greasemonkey/
-// @version     6
+// @version     7
+// @match       https://rllmukforum.com/index.php*
 // @match       https://www.rllmukforum.com/index.php*
 // ==/UserScript==
 function addStyle(css) {
@@ -218,7 +219,7 @@ function IgnoredUsersPage() {
         $li.className = 'ipsDataItem ipsGrid_span6 ipsFaded_withHover'
         $li.innerHTML = `
           <p class="ipsType_reset ipsDataItem_icon">
-            <a href="https://www.rllmukforum.com/index.php?/profile/${user.id}" class="ipsUserPhoto ipsUserPhoto_tiny">
+            <a href="https://${location.host}/index.php?/profile/${user.id}" class="ipsUserPhoto ipsUserPhoto_tiny">
               <img src="${user.avatar}" alt="${user.name}">
             </a>
           </p>
@@ -226,7 +227,7 @@ function IgnoredUsersPage() {
             <h4 class="ipsDataItem_title"><strong>${user.name}</strong></h4>
             <ul class="ipsList_inline">
               <li class="ipsType_light">
-                in <a href="https://www.rllmukforum.com/index.php?/topic/${topicId}">
+                in <a href="https://${location.host}/index.php?/topic/${topicId}">
                   ${topicConfig.name}
                 </a>
               </li>
