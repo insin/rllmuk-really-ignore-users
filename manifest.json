@@ -3,7 +3,7 @@
   "name": "Rllmuk Really Ignore Users",
   "description": "Really ignores ignored users, and ignore users in specific topics",
   "homepage_url": "https://github.com/insin/rllmuk-really-ignore-users",
-  "version": "1.2",
+  "version": "1.3",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
