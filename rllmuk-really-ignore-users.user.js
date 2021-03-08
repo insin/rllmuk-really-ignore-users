@@ -2,7 +2,7 @@
 // @name        Rllmuk Really Ignore Users
 // @description Really ignore ignored users, and ignore users in specific topics
 // @namespace   https://github.com/insin/greasemonkey/
-// @version     7
+// @version     8
 // @match       https://rllmukforum.com/index.php*
 // @match       https://www.rllmukforum.com/index.php*
 // ==/UserScript==
@@ -11,6 +11,8 @@ function addStyle(css) {
   $style.appendChild(document.createTextNode(css))
   document.querySelector('head').appendChild($style)
 }
+
+const USER_LINK_ID_RE = /profile\/(\d+)/
 
 function TopicPage() {
   let topicId = document.body.dataset.pageid
@@ -62,7 +64,7 @@ function TopicPage() {
 
     let postAvatarLinks = context.querySelectorAll('li.cAuthorPane_photo a')
     postAvatarLinks.forEach(el => {
-      let userId = /profile\/(\d+)/.exec(el.href)[1]
+      let userId = USER_LINK_ID_RE.exec(el.href)[1]
       if (!topicIgnoredUserIds.includes(userId)) return
       let post = el.closest('article.ipsComment')
       if (post.style.display == 'none') return
@@ -114,7 +116,7 @@ function TopicPage() {
 
       let topicName = document.querySelector('.ipsType_pageTitle').innerText
       let user = {
-        id: /profile\/(\d+)/.exec($el.querySelector('a').href)[1],
+        id: USER_LINK_ID_RE.exec($el.querySelector('a').href)[1],
         name: $el.querySelector('h2').innerText,
         avatar: $el.querySelector('img.ipsUserPhoto').src,
       }
@@ -261,11 +263,89 @@ function IgnoredUsersPage() {
    populateIgnoredUsersInTopics()
 }
 
+function UnreadContentPage() {
+  let ignoredUserIds = JSON.parse(localStorage.ignoredUserIds || '[]')
+  let view
+
+  function getView() {
+    let $activeViewButton = document.querySelector('a.ipsButton_primary[data-action="switchView"]')
+    return $activeViewButton ? $activeViewButton.textContent.trim() : null
+  }
+
+  function processTopic($topic) {
+    let $user = Array.from($topic.querySelectorAll('.ipsStreamItem_status a[href*="/profile/"]')).pop()
+    if (!$user) return
+    let userId = USER_LINK_ID_RE.exec($user.href)[1]
+    if (ignoredUserIds.includes(userId)) {
+      $topic.remove()
+    }
+  }
+
+  /**
+   * Process topics within a topic container and watch for a new topic container being added.
+   * When you click "Load more activity", a new <div> is added to the end of the topic container.
+   */
+  function processTopicContainer($el) {
+    Array.from($el.querySelectorAll(':scope > li.ipsStreamItem'), processTopic)
+
+    new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (view != getView()) {
+          processView()
+        }
+        else if (mutation.addedNodes[0].tagName === 'DIV') {
+          processTopicContainer(mutation.addedNodes[0])
+        }
+      })
+    }).observe($el, {childList: true})
+  }
+
+  /**
+   * Process topics when the view changes between Condensed and Expanded.
+   */
+  function processView() {
+    view = getView()
+    processTopicContainer(document.querySelector('ol.ipsStream'))
+  }
+
+  processView()
+}
+
+function ForumPage() {
+  let ignoredUserIds = JSON.parse(localStorage.ignoredUserIds || '[]')
+
+  function processTopic($topic) {
+    let $user = $topic.querySelector('.ipsDataItem_meta a')
+    if (!$user) return
+    let userId = USER_LINK_ID_RE.exec($user.href)[1]
+    if (ignoredUserIds.includes(userId)) {
+      $topic.remove()
+    }
+  }
+
+  // Initial list of topics
+  Array.from(document.querySelectorAll('ol.cTopicList > li.ipsDataItem[data-rowid]'), processTopic)
+
+  // Watch for topics being replaced when paging
+  new MutationObserver(mutations =>
+    mutations.forEach(mutation =>
+      Array.from(mutation.addedNodes).filter(node => node.nodeType === Node.ELEMENT_NODE).map(processTopic)
+    )
+  ).observe(document.querySelector('ol.cTopicList'), {childList: true})
+}
+
 let page
 if (location.href.includes('index.php?/topic/')) {
   page = TopicPage
-} else if (location.href.includes('index.php?/ignore/')) {
+}
+else if (location.href.includes('index.php?/ignore/')) {
   page = IgnoredUsersPage
+}
+else if (location.href.includes('index.php?/discover/unread')) {
+  page = UnreadContentPage
+}
+else if (location.href.includes('index.php?/forum/')) {
+  page = ForumPage
 }
 
 if (page) {

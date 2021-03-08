@@ -18,6 +18,8 @@ The following will now be hidden in topics:
 - Posts which quote an ignored user
 - Posts which @-mention an ignored user
 
+Topics created by ignored users will also be hidden.
+
 ### Ignoring users in specific topics
 
 The extension adds a new "Topic Ignore" control to user profile cards - hover over a user's name and click it to ignore them in the current topic only.
