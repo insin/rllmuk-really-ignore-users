@@ -2,7 +2,7 @@
 // @name        Rllmuk Really Ignore Users
 // @description Really ignore ignored users, and ignore users in specific topics
 // @namespace   https://github.com/insin/greasemonkey/
-// @version     8
+// @version     9
 // @match       https://rllmukforum.com/index.php*
 // @match       https://www.rllmukforum.com/index.php*
 // ==/UserScript==
@@ -101,16 +101,18 @@ function TopicPage() {
   processPosts()
   updateUnreadCommentSeparator()
 
-  // Add a new control to a user's hover card to ignore them in this topic
+  // Add a new button to a user's hover card to ignore them in this topic
   function processHoverCard($el) {
     if (!$el.classList.contains('ipsHovercard')) return
 
-    // Create a new "Topic Ignore" control
-    let $topicIgnoreItem = document.createElement('li')
-    $topicIgnoreItem.innerHTML = `<a href="#">
-      <i class="fa fa-times-circle"></i> Topic Ignore
+    // Create a new "Ignore In This Topic" button
+    let $topicIgnore = document.createElement('div')
+    $topicIgnore.className = 'ipsList_reset ipsFlex ipsFlex-ai:center ipsGap:3 ipsGap_row:0'
+    $topicIgnore.style.marginTop = '12px'
+    $topicIgnore.innerHTML = `<a href="#" class="ipsFlex-flex:11 ipsButton ipsButton_light ipsButton_verySmall">
+      Ignore In This Topic
     </a>`
-    let $ignoreLink = $topicIgnoreItem.querySelector('a')
+    let $ignoreLink = $topicIgnore.querySelector('a')
     $ignoreLink.addEventListener('click', (e) => {
       e.preventDefault()
 
@@ -144,8 +146,8 @@ function TopicPage() {
     })
 
     // Insert the new control into the hover card
-    let $findContentItem = $el.querySelector('ul.ipsList_inline li:last-child')
-    $findContentItem.parentNode.insertBefore($topicIgnoreItem, $findContentItem)
+    let $hoverCardButtons = $el.querySelector('.ipsList_reset')
+    $hoverCardButtons.insertAdjacentElement('afterend', $topicIgnore)
   }
 
   // Watch for posts being replaced when paging

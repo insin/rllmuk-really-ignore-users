@@ -22,7 +22,7 @@ Topics created by ignored users will also be hidden.
 
 ### Ignoring users in specific topics
 
-The extension adds a new "Topic Ignore" control to user profile cards - hover over a user's name and click it to ignore them in the current topic only.
+The extension adds a new "Ignore In This Topic" button to user profile cards - hover over a user's name and click it to ignore them in the current topic only.
 
 ![Example of the new Topic Ignore control being displayed](screenshots/topic_specific_ignore.png)
 
