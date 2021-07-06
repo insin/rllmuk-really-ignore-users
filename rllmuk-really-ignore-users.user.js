@@ -2,7 +2,7 @@
 // @name        Rllmuk Really Ignore Users
 // @description Really ignore ignored users, and ignore users in specific topics
 // @namespace   https://github.com/insin/greasemonkey/
-// @version     9
+// @version     10
 // @match       https://rllmukforum.com/index.php*
 // @match       https://www.rllmukforum.com/index.php*
 // ==/UserScript==
@@ -74,7 +74,7 @@ function TopicPage() {
 
   // Hide the unread comment separator if all subsequent posts are hidden
   function updateUnreadCommentSeparator() {
-    let separator = document.querySelector('hr.ipsCommentUnreadSeperator')
+    let separator = document.querySelector('div.ipsUnreadBar')
     if (!separator) return
     let hasVisiblePost = false
     let sibling = separator.nextElementSibling
